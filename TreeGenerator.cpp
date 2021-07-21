@@ -157,7 +157,6 @@ void showTree()
 		std::cout << '(' << int(p.first) << ")";
 		std::cout << std::setw(15 - p.second.size()) << '\'' << p.second << "\'\n";
 	}
-	std::cout << "Tree was successfully selected.\n";
 }
 
 void loadTree()
@@ -513,6 +512,7 @@ int main()
 	std::cout << "    Press 'c' to get code from text.\n";
 	std::cout << "    Press 'd' to get text from code.\n";
 	std::cout << "    Press 's' to save current tree.\n";
+	std::cout << "    Press 'z' to save current table.\n";
 	std::cout << "    Press 'f' to change file mode.\n";
 	std::cout << "You need to get any tree. Press 'g' or 'l' to get tree.\n";
 	char command;
@@ -521,22 +521,33 @@ int main()
 		if (command == 'l')
 		{
 			loadTree();
+			std::cout << "Tree was successfully selected.\n";
 		}
 		else if (command == 't')
 		{
 			loadTable();
+			std::cout << "Table was successfully selected. But the tree wasn't changed.\n";
 		}
 		else if (command == 'g')
 		{
-			std::cout << "Enter ONE LINE text. New tree will be builded on it.\n";
 			std::wstring ws;
-			std::getline(std::wcin, ws);
-			std::getline(std::wcin, ws);
+			if (fileMode)
+			{
+				std::cout << "Open file with the text. New tree will be builded on it.\n";
+				ws = loadWtext();
+			}
+			else
+			{
+				std::cout << "Enter ONE LINE text. New tree will be builded on it.\n";
+				std::getline(std::wcin, ws);
+				std::getline(std::wcin, ws);
+			}
 			std::string e = generate(ws);
 			if (e[0] != '-')
 			{
 				std::cout << "Building: OK\n";
 				showTree();
+				std::cout << "Tree was successfully selected.\n";
 			}
 			else std::cout << "Code hasn't been generated.\n";
 		}
@@ -545,8 +556,19 @@ int main()
 			if (mainMap.empty()) std::cout << "Table isn't selected!\n";
 			else
 			{
+				std::wstring ws;
 				std::cout << "Enter text. It will be encoded.\n";
-				std::wstring ws = loadWtext();
+				if (fileMode)
+				{
+					std::cout << "Open file with the text. It will be encoded.\n";
+					ws = loadWtext();
+				}
+				else
+				{
+					std::cout << "Enter ONE LINE text. It will be encoded.\n";
+					std::getline(std::wcin, ws);
+					std::getline(std::wcin, ws);
+				}
 				std::string code = encode(ws);
 				if (code[0] != '-')
 					std::cout << "The code is:\n" << code << '\n';
@@ -591,8 +613,12 @@ int main()
 			std::cout << "File mode has successfully changed.\n";
 		}
 		else if (command == 's')
+		{
 			saveTree();
+		}
 		else if (command == 'z')
+		{
 			saveTable();
+		}
 	}
 }
